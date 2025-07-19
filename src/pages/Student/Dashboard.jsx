@@ -546,23 +546,23 @@ const StudentDashboard = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-14 sm:h-16">
 
             <div className="flex items-center space-x-4">
 
               <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
-
-                <Coffee className="w-6 h-6 text-white" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
+                <Coffee className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
 
               </div>
 
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">ChummaOrder</h1>
+              <h1 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">ChummaOrder</h1>
 
             </div>
 
             
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
 
               <ThemeToggle />
 
@@ -572,7 +572,7 @@ const StudentDashboard = () => {
 
                 onClick={signOut}
 
-                className="hidden sm:flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
+                className="hidden md:flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
 
               >
 
@@ -590,11 +590,11 @@ const StudentDashboard = () => {
 
                 onClick={signOut}
 
-                className="sm:hidden p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
+                className="md:hidden p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
 
               >
 
-                <LogOut className="w-5 h-5" />
+                <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
 
               </button>
 
@@ -614,7 +614,7 @@ const StudentDashboard = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-          <nav className="flex space-x-8">
+          <nav className="flex space-x-4 sm:space-x-8 overflow-x-auto">
 
             {[
 
@@ -634,7 +634,7 @@ const StudentDashboard = () => {
 
                 onClick={() => setActiveTab(id)}
 
-                className={`flex items-center justify-center sm:justify-start space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
+                className={`flex items-center justify-center sm:justify-start space-x-1 sm:space-x-2 py-3 sm:py-4 px-2 sm:px-1 border-b-2 font-medium text-xs sm:text-sm whitespace-nowrap transition-colors duration-200 ${
 
                   activeTab === id
 
@@ -646,13 +646,13 @@ const StudentDashboard = () => {
 
               >
 
-                <Icon className="w-5 h-5" />
+                <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
 
                 <span className="hidden sm:inline">{label}</span>
 
                 {id === 'cart' && cartItems.length > 0 && (
 
-                  <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  <span className="bg-red-500 text-white text-xs rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center">
 
                     {cartItems.reduce((sum, item) => sum + item.quantity, 0)}
 
@@ -674,11 +674,11 @@ const StudentDashboard = () => {
 
       {/* Main Content */}
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 flex-1">
 
         {/* Menu Tab */}
 
-        {activeTab === 'menu' && (
+          <div className="space-y-4 sm:space-y-6">
 
           <div className="space-y-6">
 
@@ -688,7 +688,7 @@ const StudentDashboard = () => {
 
               <div className="flex-1 relative">
 
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
 
                 <input
 
@@ -700,7 +700,7 @@ const StudentDashboard = () => {
 
                   onChange={(e) => setSearchTerm(e.target.value)}
 
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full pl-8 sm:pl-10 pr-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm sm:text-base"
 
                 />
 
@@ -708,7 +708,7 @@ const StudentDashboard = () => {
 
               <div className="relative">
 
-                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
 
                 <select
 
@@ -716,7 +716,7 @@ const StudentDashboard = () => {
 
                   onChange={(e) => setSelectedCategory(e.target.value)}
 
-                  className="pl-10 pr-8 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="pl-8 sm:pl-10 pr-8 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm sm:text-base"
 
                 >
 
@@ -740,7 +740,7 @@ const StudentDashboard = () => {
 
             {/* Menu Items Grid */}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
 
               {filteredMenuItems.map((item) => (
 
@@ -754,13 +754,13 @@ const StudentDashboard = () => {
 
                       alt={item.name}
 
-                      className="w-full h-56 object-cover"
+                      className="w-full h-40 sm:h-48 lg:h-56 object-cover"
 
                     />
 
                     <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm text-white px-2 py-1 rounded-lg flex items-center space-x-1">
 
-                      <Star className="w-3 h-3 text-yellow-400 fill-current" />
+                      <Star className="w-2 h-2 sm:w-3 sm:h-3 text-yellow-400 fill-current" />
 
                       <span className="text-sm font-medium">{item.rating}</span>
 
@@ -770,7 +770,7 @@ const StudentDashboard = () => {
 
                       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
 
-                        <div className="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold">
+                        <div className="bg-red-500 text-white px-3 sm:px-4 py-1 sm:py-2 rounded-lg font-semibold text-sm">
 
                           Out of Stock
 
@@ -782,7 +782,7 @@ const StudentDashboard = () => {
 
                     {item.quantity_available > 0 && item.quantity_available <= 5 && (
 
-                      <div className="absolute top-3 left-3 bg-yellow-500 text-white px-2 py-1 rounded-lg text-xs font-semibold">
+                      <div className="absolute top-2 sm:top-3 left-2 sm:left-3 bg-yellow-500 text-white px-2 py-1 rounded-lg text-xs font-semibold">
 
                         Only {item.quantity_available} left!
 
@@ -792,17 +792,17 @@ const StudentDashboard = () => {
 
                   </div>
 
-                  <div className="p-4 flex flex-col flex-grow">
+                  <div className="p-3 sm:p-4 flex flex-col flex-grow">
 
                     <div className="flex justify-between items-start mb-2">
 
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{item.name}</h3>
-
-                      <span className="text-lg font-bold text-orange-600 dark:text-orange-400">₹{item.price}</span>
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white pr-2">{item.name}</h3>
+                      <span className="text-base sm:text-lg font-bold text-orange-600 dark:text-orange-400 whitespace-nowrap">₹{item.price}</span>
 
                     </div>
 
-                    <p className="text-gray-600 dark:text-gray-300 text-sm mb-3 flex-grow">{item.description}</p>
+                    <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm mb-3 flex-grow line-clamp-2">{item.description}</p>
 
                     
 
@@ -810,7 +810,7 @@ const StudentDashboard = () => {
 
                       <div className="flex items-center justify-between">
 
-                        <span className={`text-sm font-medium ${
+                        <span className={`text-xs sm:text-sm font-medium ${
 
                           item.quantity_available <= 0 
 
@@ -828,13 +828,13 @@ const StudentDashboard = () => {
 
                         </span>
 
-                        <span className="text-sm text-gray-500 dark:text-gray-400">Serves {item.serves}</span>
+                        <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Serves {item.serves}</span>
 
                       </div>
 
                       <div className="flex items-center justify-between">
 
-                        <span className="text-sm text-gray-500 dark:text-gray-400">{item.canteen_name}</span>
+                        <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate pr-2">{item.canteen_name}</span>
 
                         <button
 
@@ -842,7 +842,7 @@ const StudentDashboard = () => {
 
                           disabled={item.quantity_available <= 0}
 
-                          className={`px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 text-white font-medium ${
+                          className={`px-3 sm:px-4 py-1 sm:py-2 rounded-lg transition-colors flex items-center space-x-1 sm:space-x-2 text-white font-medium text-sm whitespace-nowrap ${
 
                             item.quantity_available <= 0
 
@@ -854,7 +854,7 @@ const StudentDashboard = () => {
 
                         >
 
-                          <Plus className="w-4 h-4" />
+                          <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
 
                           <span>{item.quantity_available <= 0 ? 'Out of Stock' : 'Add'}</span>
 
@@ -900,7 +900,7 @@ const StudentDashboard = () => {
 
           <div className="space-y-6">
 
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Your Cart</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Your Cart</h2>
 
 
 
@@ -937,8 +937,8 @@ const StudentDashboard = () => {
                   {cartItems.map((item) => (
 
                     <div key={item.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-
-                      <div className="flex items-center space-x-4">
+                    <div key={item.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
 
                         <img
 
@@ -946,53 +946,53 @@ const StudentDashboard = () => {
 
                           alt={item.menu_items.name}
 
-                          className="w-20 h-20 object-cover rounded-lg"
+                          className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg mx-auto sm:mx-0"
 
                         />
 
                         <div className="flex-1">
 
-                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{item.menu_items.name}</h3>
-
-                          <p className="text-gray-600 dark:text-gray-300">₹{item.menu_items.price} each</p>
+                        <div className="flex-1 text-center sm:text-left">
+                          <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">{item.menu_items.name}</h3>
+                          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">₹{item.menu_items.price} each</p>
 
                           <p className="text-sm text-gray-500 dark:text-gray-400">{item.menu_items.canteen_name}</p>
 
                         </div>
 
-                        <div className="flex items-center space-x-3">
+                        <div className="flex items-center justify-center space-x-3">
 
                           <button
 
                             onClick={() => updateCartQuantity(item.id, item.quantity - 1)}
-
+                            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
                             className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
 
                           >
 
-                            <Minus className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                            <Minus className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600 dark:text-gray-300" />
 
                           </button>
 
-                          <span className="text-lg font-semibold text-gray-900 dark:text-white w-8 text-center">{item.quantity}</span>
+                          <span className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white w-6 sm:w-8 text-center">{item.quantity}</span>
 
                           <button
 
                             onClick={() => updateCartQuantity(item.id, item.quantity + 1)}
 
-                            className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
+                            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
 
                           >
 
-                            <Plus className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                            <Plus className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600 dark:text-gray-300" />
 
                           </button>
 
                         </div>
 
                         <div className="text-right">
-
-                          <p className="text-lg font-bold text-gray-900 dark:text-white">
+                        <div className="text-center sm:text-right">
+                          <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
 
                             ₹{(item.menu_items.price * item.quantity).toFixed(2)}
 
@@ -1002,7 +1002,7 @@ const StudentDashboard = () => {
 
                             onClick={() => removeFromCart(item.id)}
 
-                            className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors"
+                            className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors mt-1"
 
                           >
 
@@ -1023,8 +1023,8 @@ const StudentDashboard = () => {
 
 
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-
-                  <div className="flex justify-between items-center text-xl font-bold mb-4">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6">
+                  <div className="flex justify-between items-center text-lg sm:text-xl font-bold mb-4">
 
                     <span className="text-gray-900 dark:text-white">Total:</span>
 
@@ -1040,11 +1040,11 @@ const StudentDashboard = () => {
 
                     onClick={placeOrder}
 
-                    className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg transition-colors flex items-center justify-center space-x-2"
+                    className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 sm:py-3 rounded-lg transition-colors flex items-center justify-center space-x-2"
 
                   >
 
-                    <CreditCard className="w-5 h-5" />
+                    <CreditCard className="w-4 h-4 sm:w-5 sm:h-5" />
 
                     <span>Place Order</span>
 
@@ -1068,7 +1068,7 @@ const StudentDashboard = () => {
 
           <div className="space-y-6">
 
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Your Orders</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Your Orders</h2>
 
 
 
@@ -1103,18 +1103,18 @@ const StudentDashboard = () => {
                 {orders.map((order) => (
 
                   <div key={order.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-
-                    <div className="flex justify-between items-start mb-4">
+                  <div key={order.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6">
+                    <div className="flex flex-col sm:flex-row justify-between items-start mb-4 space-y-2 sm:space-y-0">
 
                       <div>
 
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
 
                           Order #{order.id.slice(-8)}
 
                         </h3>
 
-                        <p className="text-gray-600 dark:text-gray-300">
+                        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
 
                           {new Date(order.created_at).toLocaleDateString()} at{' '}
 
@@ -1124,7 +1124,7 @@ const StudentDashboard = () => {
 
                       </div>
 
-                      <div className="text-right">
+                      <div className="text-left sm:text-right">
 
                         <div className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
 
@@ -1134,7 +1134,7 @@ const StudentDashboard = () => {
 
                         </div>
 
-                        <p className="text-lg font-bold text-gray-900 dark:text-white mt-2">₹{order.total_amount}</p>
+                        <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mt-2">₹{order.total_amount}</p>
 
                       </div>
 
@@ -1147,8 +1147,8 @@ const StudentDashboard = () => {
                       {order.order_items.map((item) => (
 
                         <div key={item.id} className="flex justify-between items-center py-2 border-t border-gray-200 dark:border-gray-600">
-
-                          <div className="flex items-center space-x-3">
+                        <div key={item.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-2 border-t border-gray-200 dark:border-gray-600 space-y-2 sm:space-y-0">
+                          <div className="flex items-center space-x-2 sm:space-x-3">
 
                             <img
 
@@ -1156,13 +1156,13 @@ const StudentDashboard = () => {
 
                               alt={item.menu_items.name}
 
-                              className="w-10 h-10 object-cover rounded"
+                              className="w-8 h-8 sm:w-10 sm:h-10 object-cover rounded"
 
                             />
 
                             <div>
 
-                              <p className="font-medium text-gray-900 dark:text-white">{item.menu_items.name}</p>
+                              <p className="text-sm sm:text-base font-medium text-gray-900 dark:text-white">{item.menu_items.name}</p>
 
                               <p className="text-sm text-gray-600 dark:text-gray-300">Quantity: {item.quantity}</p>
 
@@ -1170,7 +1170,7 @@ const StudentDashboard = () => {
 
                           </div>
 
-                          <p className="font-medium text-gray-900 dark:text-white">₹{(item.price * item.quantity).toFixed(2)}</p>
+                          <p className="text-sm sm:text-base font-medium text-gray-900 dark:text-white">₹{(item.price * item.quantity).toFixed(2)}</p>
 
                         </div>
 
@@ -1198,25 +1198,25 @@ const StudentDashboard = () => {
 
           <div className="space-y-6">
 
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Profile</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Profile</h2>
 
             
 
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 max-w-5xl mx-auto">
 
               <div className="flex items-center space-x-4 mb-6">
-
-                <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center">
-
-                  <User className="w-8 h-8 text-white" />
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6 max-w-6xl mx-auto">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-4 mb-6">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center">
+                  <User className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
 
                 </div>
 
                 <div>
 
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{user?.full_name || 'Student'}</h3>
-
-                  <p className="text-gray-600 dark:text-gray-300">{user?.email}</p>
+                <div className="text-center sm:text-left">
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">{user?.full_name || 'Student'}</h3>
+                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">{user?.email}</p>
 
                   {user?.registration_number && (
 
@@ -1230,7 +1230,7 @@ const StudentDashboard = () => {
 
 
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
 
                 <div>
 
@@ -1246,7 +1246,7 @@ const StudentDashboard = () => {
 
                     value={user?.full_name || ''}
 
-                    readOnly
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm sm:text-base"
 
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
 
@@ -1268,7 +1268,7 @@ const StudentDashboard = () => {
 
                     value={user?.email || ''}
 
-                    readOnly
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm sm:text-base"
 
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
 
@@ -1290,7 +1290,7 @@ const StudentDashboard = () => {
 
                     value="Student"
 
-                    readOnly
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm sm:text-base"
 
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
 
@@ -1312,7 +1312,7 @@ const StudentDashboard = () => {
 
                     value={user?.registration_number || 'Not provided'}
 
-                    readOnly
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm sm:text-base"
 
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
 
@@ -1334,7 +1334,7 @@ const StudentDashboard = () => {
 
                     value={user?.mobile_number || 'Not provided'}
 
-                    readOnly
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm sm:text-base"
 
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
 
@@ -1356,7 +1356,7 @@ const StudentDashboard = () => {
 
                     value={user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'Not available'}
 
-                    readOnly
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm sm:text-base"
 
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
 
