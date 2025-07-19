@@ -8,41 +8,41 @@ import { useTheme } from '../../contexts/ThemeContext';
 
 import { useRealtimeSubscription } from '../../hooks/useRealtimeSubscription';
 
-import { 
+import { 
 
-  ShoppingCart, 
+  ShoppingCart, 
 
-  Plus, 
+  Plus, 
 
-  Minus, 
+  Minus, 
 
-  Star, 
+  Star, 
 
-  Clock, 
+  Clock, 
 
-  CheckCircle, 
+  CheckCircle, 
 
-  XCircle,
+  XCircle,
 
-  Package,
+  Package,
 
-  CreditCard,
+  CreditCard,
 
-  User,
+  User,
 
-  LogOut,
+  LogOut,
 
-  Search,
+  Search,
 
-  Filter,
+  Filter,
 
-  Trash2,
+  Trash2,
 
-  X,
+  X,
 
-  ChefHat,
+  ChefHat,
 
-  Coffee
+  Coffee
 
 } from 'lucide-react';
 
@@ -58,1347 +58,1347 @@ import Footer from '../../components/Common/Footer';
 
 const StudentDashboard = () => {
 
-  const { user, signOut } = useAuth();
+  const { user, signOut } = useAuth();
 
-  const { isDarkMode } = useTheme();
+  const { isDarkMode } = useTheme();
 
-  const [activeTab, setActiveTab] = useState('menu');
+  const [activeTab, setActiveTab] = useState('menu');
 
-  const [menuItems, setMenuItems] = useState([]);
+  const [menuItems, setMenuItems] = useState([]);
 
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
 
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState([]);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
-  const [toast, setToast] = useState(null);
+  const [toast, setToast] = useState(null);
 
 
 
-  // Real-time subscriptions for menu items and cart
+  // Real-time subscriptions for menu items and cart
 
-  useRealtimeSubscription({
+  useRealtimeSubscription({
 
-    table: 'menu_items',
+    table: 'menu_items',
 
-    onUpdate: (payload) => {
+    onUpdate: (payload) => {
 
-      console.log('Menu item updated:', payload);
+      console.log('Menu item updated:', payload);
 
-      setMenuItems(prev => prev.map(item => 
+      setMenuItems(prev => prev.map(item => 
 
-        item.id === payload.new.id ? { ...item, ...payload.new } : item
+        item.id === payload.new.id ? { ...item, ...payload.new } : item
 
-      ));
+      ));
 
-    }
+    }
 
-  });
+  });
 
 
 
-  useRealtimeSubscription({
+  useRealtimeSubscription({
 
-    table: 'cart_items',
+    table: 'cart_items',
 
-    filter: `user_id=eq.${user?.id}`,
+    filter: `user_id=eq.${user?.id}`,
 
-    onUpdate: (payload) => {
+    onUpdate: (payload) => {
 
-      console.log('Cart item updated:', payload);
+      console.log('Cart item updated:', payload);
 
-      fetchCartItems();
+      fetchCartItems();
 
-    },
+    },
 
-    onInsert: (payload) => {
+    onInsert: (payload) => {
 
-      console.log('Cart item added:', payload);
+      console.log('Cart item added:', payload);
 
-      fetchCartItems();
+      fetchCartItems();
 
-    },
+    },
 
-    onDelete: (payload) => {
+    onDelete: (payload) => {
 
-      console.log('Cart item removed:', payload);
+      console.log('Cart item removed:', payload);
 
-      fetchCartItems();
+      fetchCartItems();
 
-    }
+    }
 
-  });
+  });
 
 
 
-  const categories = ['all', 'main_course', 'snacks', 'beverages', 'south_indian', 'desserts'];
+  const categories = ['all', 'main_course', 'snacks', 'beverages', 'south_indian', 'desserts'];
 
 
 
-  useEffect(() => {
+  useEffect(() => {
 
-    fetchMenuItems();
+    fetchMenuItems();
 
-    fetchCartItems();
+    fetchCartItems();
 
-    fetchOrders();
+    fetchOrders();
 
-  }, []);
+  }, []);
 
 
 
-  const fetchMenuItems = async () => {
+  const fetchMenuItems = async () => {
 
-    try {
+    try {
 
-      const { data, error } = await supabase
+      const { data, error } = await supabase
 
-        .from('menu_items')
+        .from('menu_items')
 
-        .select('*')
+        .select('*')
 
-        .order('name');
+        .order('name');
 
 
 
-      if (error) throw error;
+      if (error) throw error;
 
-      setMenuItems(data || []);
+      setMenuItems(data || []);
 
-    } catch (error) {
+    } catch (error) {
 
-      console.error('Error fetching menu items:', error);
+      console.error('Error fetching menu items:', error);
 
-      showToast('Failed to load menu items', 'error');
+      showToast('Failed to load menu items', 'error');
 
-    }
+    }
 
-  };
+  };
 
 
 
-  const fetchCartItems = async () => {
+  const fetchCartItems = async () => {
 
-    try {
+    try {
 
-      if (!user) return;
+      if (!user) return;
 
-      const { data, error } = await supabase
+      const { data, error } = await supabase
 
-        .from('cart_items')
+        .from('cart_items')
 
-        .select(`
+        .select(`
 
-          *,
+          *,
 
-          menu_items (*)
+          menu_items (*)
 
-        `)
+        `)
 
-        .eq('user_id', user.id);
+        .eq('user_id', user.id);
 
 
 
-      if (error) throw error;
+      if (error) throw error;
 
-      setCartItems(data || []);
+      setCartItems(data || []);
 
-    } catch (error) {
+    } catch (error) {
 
-      console.error('Error fetching cart items:', error);
+      console.error('Error fetching cart items:', error);
 
-      showToast('Failed to load cart items', 'error');
+      showToast('Failed to load cart items', 'error');
 
-    }
+    }
 
-  };
+  };
 
 
 
-  const fetchOrders = async () => {
+  const fetchOrders = async () => {
 
-    try {
+    try {
 
-      if (!user) return;
+      if (!user) return;
 
-      const { data, error } = await supabase
+      const { data, error } = await supabase
 
-        .from('orders')
+        .from('orders')
 
-        .select(`
+        .select(`
 
-          *,
+          *,
 
-          order_items (
+          order_items (
 
-            *,
+            *,
 
-            menu_items (*)
+            menu_items (*)
 
-          )
+          )
 
-        `)
+        `)
 
-        .eq('user_id', user.id)
+        .eq('user_id', user.id)
 
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false });
 
 
 
-      if (error) throw error;
+      if (error) throw error;
 
-      setOrders(data || []);
+      setOrders(data || []);
 
-    } catch (error) {
+    } catch (error) {
 
-      console.error('Error fetching orders:', error);
+      console.error('Error fetching orders:', error);
 
-      showToast('Failed to load orders', 'error');
+      showToast('Failed to load orders', 'error');
 
-    } finally {
+    } finally {
 
-      setLoading(false);
+      setLoading(false);
 
-    }
+    }
 
-  };
+  };
 
 
 
-  const addToCart = async (menuItem) => {
+  const addToCart = async (menuItem) => {
 
-    try {
+    try {
 
-      if (!user) return;
+      if (!user) return;
 
-      const { data, error } = await supabase.rpc('add_to_cart_with_quantity_check', {
+      const { data, error } = await supabase.rpc('add_to_cart_with_quantity_check', {
 
-        p_user_id: user.id,
+        p_user_id: user.id,
 
-        p_menu_item_id: menuItem.id,
+        p_menu_item_id: menuItem.id,
 
-        p_quantity: 1
+        p_quantity: 1
 
-      });
+      });
 
 
 
-      if (error) throw error;
+      if (error) throw error;
 
-      
+      
 
-      if (data.success) {
+      if (data.success) {
 
-        showToast(data.message, 'success');
+        showToast(data.message, 'success');
 
-        await fetchCartItems();
+        await fetchCartItems();
 
-        await fetchMenuItems();
+        await fetchMenuItems();
 
-      } else {
+      } else {
 
-        showToast(data.message, 'error');
+        showToast(data.message, 'error');
 
-      }
+      }
 
-    } catch (error) {
+    } catch (error) {
 
-      console.error('Error adding to cart:', error);
+      console.error('Error adding to cart:', error);
 
-      showToast('Failed to add item to cart', 'error');
+      showToast('Failed to add item to cart', 'error');
 
-    }
+    }
 
-  };
+  };
 
 
 
-  const updateCartQuantity = async (cartItemId, newQuantity) => {
+  const updateCartQuantity = async (cartItemId, newQuantity) => {
 
-    try {
+    try {
 
-      if (!user) return;
+      if (!user) return;
 
-      const { data, error } = await supabase.rpc('update_cart_quantity_with_stock_check', {
+      const { data, error } = await supabase.rpc('update_cart_quantity_with_stock_check', {
 
-        p_user_id: user.id,
+        p_user_id: user.id,
 
-        p_cart_item_id: cartItemId,
+        p_cart_item_id: cartItemId,
 
-        p_new_quantity: newQuantity
+        p_new_quantity: newQuantity
 
-      });
+      });
 
 
 
-      if (error) throw error;
+      if (error) throw error;
 
 
 
-      if (data.success) {
+      if (data.success) {
 
-        showToast(data.message, 'success');
+        showToast(data.message, 'success');
 
-        await fetchCartItems();
+        await fetchCartItems();
 
-        await fetchMenuItems();
+        await fetchMenuItems();
 
-      } else {
+      } else {
 
-        showToast(data.message, 'error');
+        showToast(data.message, 'error');
 
-      }
+      }
 
-    } catch (error) {
+    } catch (error) {
 
-      console.error('Error updating cart quantity:', error);
+      console.error('Error updating cart quantity:', error);
 
-      showToast('Failed to update quantity', 'error');
+      showToast('Failed to update quantity', 'error');
 
-    }
+    }
 
-  };
+  };
 
 
 
-  const removeFromCart = async (cartItemId) => {
+  const removeFromCart = async (cartItemId) => {
 
-    try {
+    try {
 
-      if (!user) return;
+      if (!user) return;
 
-      const { data, error } = await supabase.rpc('remove_from_cart_with_quantity_restore', {
+      const { data, error } = await supabase.rpc('remove_from_cart_with_quantity_restore', {
 
-        p_user_id: user.id,
+        p_user_id: user.id,
 
-        p_cart_item_id: cartItemId
+        p_cart_item_id: cartItemId
 
-      });
+      });
 
 
 
-      if (error) throw error;
+      if (error) throw error;
 
 
 
-      if (data.success) {
+      if (data.success) {
 
-        showToast(data.message, 'success');
+        showToast(data.message, 'success');
 
-        await fetchCartItems();
+        await fetchCartItems();
 
-        await fetchMenuItems();
+        await fetchMenuItems();
 
-      } else {
+      } else {
 
-        showToast(data.message, 'error');
+        showToast(data.message, 'error');
 
-      }
+      }
 
-    } catch (error) {
+    } catch (error) {
 
-      console.error('Error removing from cart:', error);
+      console.error('Error removing from cart:', error);
 
-      showToast('Failed to remove item', 'error');
+      showToast('Failed to remove item', 'error');
 
-    }
+    }
 
-  };
+  };
 
 
 
-  const placeOrder = async () => {
+  const placeOrder = async () => {
 
-    try {
+    try {
 
-      if (!user) return;
+      if (!user) return;
 
-      const { data, error } = await supabase.rpc('place_order_with_cart_clear', {
+      const { data, error } = await supabase.rpc('place_order_with_cart_clear', {
 
-        p_user_id: user.id
+        p_user_id: user.id
 
-      });
+      });
 
 
 
-      if (error) throw error;
+      if (error) throw error;
 
 
 
-      if (data.success) {
+      if (data.success) {
 
-        showToast(data.message, 'success');
+        showToast(data.message, 'success');
 
-        setActiveTab('orders');
+        setActiveTab('orders');
 
-        await fetchOrders();
+        await fetchOrders();
 
-        await fetchCartItems();
+        await fetchCartItems();
 
-        await fetchMenuItems();
+        await fetchMenuItems();
 
-      } else {
+      } else {
 
-        showToast(data.message, 'error');
+        showToast(data.message, 'error');
 
-      }
+      }
 
-    } catch (error) {
+    } catch (error) {
 
-      console.error('Error placing order:', error);
+      console.error('Error placing order:', error);
 
-      showToast('Failed to place order', 'error');
+      showToast('Failed to place order', 'error');
 
-    }
+    }
 
-  };
+  };
 
 
 
-  const showToast = (message, type) => {
+  const showToast = (message, type) => {
 
-    setToast({ message, type });
+    setToast({ message, type });
 
-    setTimeout(() => setToast(null), 3000);
+    setTimeout(() => setToast(null), 3000);
 
-  };
+  };
 
 
 
-  const filteredMenuItems = menuItems.filter(item => {
+  const filteredMenuItems = menuItems.filter(item => {
 
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
 
-                          item.description.toLowerCase().includes(searchTerm.toLowerCase());
+                          item.description.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
+    const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
 
-    return matchesSearch && matchesCategory;
+    return matchesSearch && matchesCategory;
 
-  });
+  });
 
 
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status) => {
 
-    switch (status) {
+    switch (status) {
 
-      case 'pending': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+      case 'pending': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
 
-      case 'processing': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+      case 'processing': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
 
-      case 'ready': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+      case 'ready': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
 
-      case 'completed': return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
+      case 'completed': return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
 
-      case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+      case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
 
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
 
-    }
+    }
 
-  };
+  };
 
 
 
-  const getStatusIcon = (status) => {
+  const getStatusIcon = (status) => {
 
-    switch (status) {
+    switch (status) {
 
-      case 'pending': return <Clock className="w-4 h-4" />;
+      case 'pending': return <Clock className="w-4 h-4" />;
 
-      case 'processing': return <Package className="w-4 h-4" />;
+      case 'processing': return <Package className="w-4 h-4" />;
 
-      case 'ready': return <CheckCircle className="w-4 h-4" />;
+      case 'ready': return <CheckCircle className="w-4 h-4" />;
 
-      case 'completed': return <CheckCircle className="w-4 h-4" />;
+      case 'completed': return <CheckCircle className="w-4 h-4" />;
 
-      case 'cancelled': return <XCircle className="w-4 h-4" />;
+      case 'cancelled': return <XCircle className="w-4 h-4" />;
 
-      default: return <Clock className="w-4 h-4" />;
+      default: return <Clock className="w-4 h-4" />;
 
-    }
+    }
 
-  };
+  };
 
 
 
-  if (loading) {
+  if (loading) {
 
-    return <Loading />;
+    return <Loading />;
 
-  }
+  }
 
 
 
-  return (
+  return (
 
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200 flex flex-col">
 
-      {/* Sticky Header */}
+      {/* Sticky Header */}
 
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 transition-colors duration-200">
+      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 transition-colors duration-200">
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-16">
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4">
 
-              <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
 
-                <Coffee className="w-6 h-6 text-white" />
+                <Coffee className="w-6 h-6 text-white" />
 
-              </div>
+              </div>
 
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">ChummaOrder</h1>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-white">ChummaOrder</h1>
 
-            </div>
+            </div>
 
-            
+            
 
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4">
 
-              <ThemeToggle />
+              <ThemeToggle />
 
-              
+              
 
-              <button
+              <button
 
-                onClick={signOut}
+                onClick={signOut}
 
-                className="hidden sm:flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
+                className="hidden sm:flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
 
-              >
+              >
 
-                <LogOut className="w-5 h-5" />
+                <LogOut className="w-5 h-5" />
 
-                <span>Sign Out</span>
+                <span>Sign Out</span>
 
-              </button>
+              </button>
 
-              
+              
 
-              {/* Mobile sign out - icon only */}
+              {/* Mobile sign out - icon only */}
 
-              <button
+              <button
 
-                onClick={signOut}
+                onClick={signOut}
 
-                className="sm:hidden p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
+                className="sm:hidden p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
 
-              >
+              >
 
-                <LogOut className="w-5 h-5" />
+                <LogOut className="w-5 h-5" />
 
-              </button>
+              </button>
 
-            </div>
+            </div>
 
-          </div>
+          </div>
 
-        </div>
+        </div>
 
-      </header>
+      </header>
 
 
 
-      {/* Sticky Navigation Tabs */}
+      {/* Sticky Navigation Tabs */}
 
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-16 z-40 transition-colors duration-200">
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-16 z-40 transition-colors duration-200">
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-          <nav className="flex space-x-8">
+          <nav className="flex space-x-8">
 
-            {[
+            {[
 
-              { id: 'menu', label: 'Menu', icon: Search },
+              { id: 'menu', label: 'Menu', icon: Search },
 
-              { id: 'cart', label: 'Cart', icon: ShoppingCart },
+              { id: 'cart', label: 'Cart', icon: ShoppingCart },
 
-              { id: 'orders', label: 'Orders', icon: Package },
+              { id: 'orders', label: 'Orders', icon: Package },
 
-              { id: 'profile', label: 'Profile', icon: User }
+              { id: 'profile', label: 'Profile', icon: User }
 
-            ].map(({ id, label, icon: Icon }) => (
+            ].map(({ id, label, icon: Icon }) => (
 
-              <button
+              <button
 
-                key={id}
+                key={id}
 
-                onClick={() => setActiveTab(id)}
+                onClick={() => setActiveTab(id)}
 
-                className={`flex items-center justify-center sm:justify-start space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
+                className={`flex items-center justify-center sm:justify-start space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
 
-                  activeTab === id
+                  activeTab === id
 
-                    ? 'border-orange-500 text-orange-600 dark:text-orange-400'
+                    ? 'border-orange-500 text-orange-600 dark:text-orange-400'
 
-                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
 
-                }`}
+                }`}
 
-              >
+              >
 
-                <Icon className="w-5 h-5" />
+                <Icon className="w-5 h-5" />
 
-                <span className="hidden sm:inline">{label}</span>
+                <span className="hidden sm:inline">{label}</span>
 
-                {id === 'cart' && cartItems.length > 0 && (
+                {id === 'cart' && cartItems.length > 0 && (
 
-                  <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
 
-                    {cartItems.reduce((sum, item) => sum + item.quantity, 0)}
+                    {cartItems.reduce((sum, item) => sum + item.quantity, 0)}
 
-                  </span>
+                  </span>
 
-                )}
+                )}
 
-              </button>
+              </button>
 
-            ))}
+            ))}
 
-          </nav>
+          </nav>
 
-        </div>
+        </div>
 
-      </div>
+      </div>
 
 
 
-      {/* Main Content */}
+      {/* Main Content */}
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
 
-        {/* Menu Tab */}
+        {/* Menu Tab */}
 
-        {activeTab === 'menu' && (
+        {activeTab === 'menu' && (
 
-          <div className="space-y-6">
+          <div className="space-y-6">
 
-            {/* Search and Filter */}
+            {/* Search and Filter */}
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4">
 
-              <div className="flex-1 relative">
+              <div className="flex-1 relative">
 
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
 
-                <input
+                <input
 
-                  type="text"
+                  type="text"
 
-                  placeholder="Search menu items..."
+                  placeholder="Search menu items..."
 
-                  value={searchTerm}
+                  value={searchTerm}
 
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => setSearchTerm(e.target.value)}
 
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
 
-                />
+                />
 
-              </div>
+              </div>
 
-              <div className="relative">
+              <div className="relative">
 
-                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
 
-                <select
+                <select
 
-                  value={selectedCategory}
+                  value={selectedCategory}
 
-                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
 
-                  className="pl-10 pr-8 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="pl-10 pr-8 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
 
-                >
+                >
 
-                  {categories.map(category => (
+                  {categories.map(category => (
 
-                    <option key={category} value={category} className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                    <option key={category} value={category} className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
 
-                      {category.charAt(0).toUpperCase() + category.slice(1)}
+                      {category.charAt(0).toUpperCase() + category.slice(1)}
 
-                    </option>
+                    </option>
 
-                  ))}
+                  ))}
 
-                </select>
+                </select>
 
-              </div>
+              </div>
 
-            </div>
+            </div>
 
 
 
-            {/* Menu Items Grid */}
+            {/* Menu Items Grid */}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-              {filteredMenuItems.map((item) => (
+              {filteredMenuItems.map((item) => (
 
-                <div key={item.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow flex flex-col">
+                <div key={item.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow flex flex-col">
 
-                  <div className="relative">
+                  <div className="relative">
 
-                    <img
+                    <img
 
-                      src={item.image_url}
+                      src={item.image_url}
 
-                      alt={item.name}
+                      alt={item.name}
 
-                      className="w-full h-56 object-cover"
+                      className="w-full h-56 object-cover"
 
-                    />
+                    />
 
-                    <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm text-white px-2 py-1 rounded-lg flex items-center space-x-1">
+                    <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm text-white px-2 py-1 rounded-lg flex items-center space-x-1">
 
-                      <Star className="w-3 h-3 text-yellow-400 fill-current" />
+                      <Star className="w-3 h-3 text-yellow-400 fill-current" />
 
-                      <span className="text-sm font-medium">{item.rating}</span>
+                      <span className="text-sm font-medium">{item.rating}</span>
 
-                    </div>
+                    </div>
 
-                    {item.quantity_available <= 0 && (
+                    {item.quantity_available <= 0 && (
 
-                      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
+                      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
 
-                        <div className="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold">
+                        <div className="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold">
 
-                          Out of Stock
+                          Out of Stock
 
-                        </div>
+                        </div>
 
-                      </div>
+                      </div>
 
-                    )}
+                    )}
 
-                    {item.quantity_available > 0 && item.quantity_available <= 5 && (
+                    {item.quantity_available > 0 && item.quantity_available <= 5 && (
 
-                      <div className="absolute top-3 left-3 bg-yellow-500 text-white px-2 py-1 rounded-lg text-xs font-semibold">
+                      <div className="absolute top-3 left-3 bg-yellow-500 text-white px-2 py-1 rounded-lg text-xs font-semibold">
 
-                        Only {item.quantity_available} left!
+                        Only {item.quantity_available} left!
 
-                      </div>
+                      </div>
 
-                    )}
+                    )}
 
-                  </div>
+                  </div>
 
-                  <div className="p-4 flex flex-col flex-grow">
+                  <div className="p-4 flex flex-col flex-grow">
 
-                    <div className="flex justify-between items-start mb-2">
+                    <div className="flex justify-between items-start mb-2">
 
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{item.name}</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{item.name}</h3>
 
-                      <span className="text-lg font-bold text-orange-600 dark:text-orange-400">₹{item.price}</span>
+                      <span className="text-lg font-bold text-orange-600 dark:text-orange-400">₹{item.price}</span>
 
-                    </div>
+                    </div>
 
-                    <p className="text-gray-600 dark:text-gray-300 text-sm mb-3 flex-grow">{item.description}</p>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm mb-3 flex-grow">{item.description}</p>
 
-                    
+                    
 
-                    <div className="mt-auto space-y-3">
+                    <div className="mt-auto space-y-3">
 
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between">
 
-                        <span className={`text-sm font-medium ${
+                        <span className={`text-sm font-medium ${
 
-                          item.quantity_available <= 0 
+                          item.quantity_available <= 0 
 
-                            ? 'text-red-600 dark:text-red-400' 
+                            ? 'text-red-600 dark:text-red-400' 
 
-                            : item.quantity_available <= 5 
+                            : item.quantity_available <= 5 
 
-                            ? 'text-yellow-600 dark:text-yellow-400' 
+                            ? 'text-yellow-600 dark:text-yellow-400' 
 
-                            : 'text-green-600 dark:text-green-400'
+                            : 'text-green-600 dark:text-green-400'
 
-                        }`}>
+                        }`}>
 
-                          Available: {item.quantity_available}
+                          Available: {item.quantity_available}
 
-                        </span>
+                        </span>
 
-                        <span className="text-sm text-gray-500 dark:text-gray-400">Serves {item.serves}</span>
+                        <span className="text-sm text-gray-500 dark:text-gray-400">Serves {item.serves}</span>
 
-                      </div>
+                      </div>
 
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between">
 
-                        <span className="text-sm text-gray-500 dark:text-gray-400">{item.canteen_name}</span>
+                        <span className="text-sm text-gray-500 dark:text-gray-400">{item.canteen_name}</span>
 
-                        <button
+                        <button
 
-                          onClick={() => addToCart(item)}
+                          onClick={() => addToCart(item)}
 
-                          disabled={item.quantity_available <= 0}
+                          disabled={item.quantity_available <= 0}
 
-                          className={`px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 text-white font-medium ${
+                          className={`px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 text-white font-medium ${
 
-                            item.quantity_available <= 0
+                            item.quantity_available <= 0
 
-                              ? 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed'
+                              ? 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed'
 
-                              : 'bg-orange-500 hover:bg-orange-600'
+                              : 'bg-orange-500 hover:bg-orange-600'
 
-                          }`}
+                          }`}
 
-                        >
+                        >
 
-                          <Plus className="w-4 h-4" />
+                          <Plus className="w-4 h-4" />
 
-                          <span>{item.quantity_available <= 0 ? 'Out of Stock' : 'Add'}</span>
+                          <span>{item.quantity_available <= 0 ? 'Out of Stock' : 'Add'}</span>
 
-                        </button>
+                        </button>
 
-                      </div>
+                      </div>
 
-                    </div>
+                    </div>
 
-                  </div>
+                  </div>
 
-                </div>
+                </div>
 
-              ))}
+              ))}
 
-            </div>
+            </div>
 
 
 
-            {filteredMenuItems.length === 0 && (
+            {filteredMenuItems.length === 0 && (
 
-              <div className="text-center py-12">
+              <div className="text-center py-12">
 
-                <Search className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <Search className="w-12 h-12 text-gray-400 mx-auto mb-4" />
 
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No items found</h3>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No items found</h3>
 
-                <p className="text-gray-500 dark:text-gray-400">Try adjusting your search or filter criteria</p>
+                <p className="text-gray-500 dark:text-gray-400">Try adjusting your search or filter criteria</p>
 
-              </div>
+              </div>
 
-            )}
+            )}
 
-          </div>
+          </div>
 
-        )}
+        )}
 
 
 
-        {/* Cart Tab */}
+        {/* Cart Tab */}
 
-        {activeTab === 'cart' && (
+        {activeTab === 'cart' && (
 
-          <div className="space-y-6">
+          <div className="space-y-6">
 
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Your Cart</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Your Cart</h2>
 
 
 
-            {cartItems.length === 0 ? (
+            {cartItems.length === 0 ? (
 
-              <div className="text-center py-12">
+              <div className="text-center py-12">
 
-                <ShoppingCart className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <ShoppingCart className="w-12 h-12 text-gray-400 mx-auto mb-4" />
 
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Your cart is empty</h3>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Your cart is empty</h3>
 
-                <p className="text-gray-500 dark:text-gray-400">Add some delicious items from the menu</p>
+                <p className="text-gray-500 dark:text-gray-400">Add some delicious items from the menu</p>
 
-                <button
+                <button
 
-                  onClick={() => setActiveTab('menu')}
+                  onClick={() => setActiveTab('menu')}
 
-                  className="mt-4 bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg transition-colors"
+                  className="mt-4 bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg transition-colors"
 
-                >
+                >
 
-                  Browse Menu
+                  Browse Menu
 
-                </button>
+                </button>
 
-              </div>
+              </div>
 
-            ) : (
+            ) : (
 
-              <div className="space-y-6">
+              <div className="space-y-6">
 
-                <div className="space-y-4">
+                <div className="space-y-4">
 
-                  {cartItems.map((item) => (
+                  {cartItems.map((item) => (
 
-                    <div key={item.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                    <div key={item.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
 
-                      <div className="flex items-center space-x-4">
+                      <div className="flex items-center space-x-4">
 
-                        <img
+                        <img
 
-                          src={item.menu_items.image_url}
+                          src={item.menu_items.image_url}
 
-                          alt={item.menu_items.name}
+                          alt={item.menu_items.name}
 
-                          className="w-20 h-20 object-cover rounded-lg"
+                          className="w-20 h-20 object-cover rounded-lg"
 
-                        />
+                        />
 
-                        <div className="flex-1">
+                        <div className="flex-1">
 
-                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{item.menu_items.name}</h3>
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{item.menu_items.name}</h3>
 
-                          <p className="text-gray-600 dark:text-gray-300">₹{item.menu_items.price} each</p>
+                          <p className="text-gray-600 dark:text-gray-300">₹{item.menu_items.price} each</p>
 
-                          <p className="text-sm text-gray-500 dark:text-gray-400">{item.menu_items.canteen_name}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">{item.menu_items.canteen_name}</p>
 
-                        </div>
+                        </div>
 
-                        <div className="flex items-center space-x-3">
+                        <div className="flex items-center space-x-3">
 
-                          <button
+                          <button
 
-                            onClick={() => updateCartQuantity(item.id, item.quantity - 1)}
+                            onClick={() => updateCartQuantity(item.id, item.quantity - 1)}
 
-                            className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
+                            className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
 
-                          >
+                          >
 
-                            <Minus className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                            <Minus className="w-4 h-4 text-gray-600 dark:text-gray-300" />
 
-                          </button>
+                          </button>
 
-                          <span className="text-lg font-semibold text-gray-900 dark:text-white w-8 text-center">{item.quantity}</span>
+                          <span className="text-lg font-semibold text-gray-900 dark:text-white w-8 text-center">{item.quantity}</span>
 
-                          <button
+                          <button
 
-                            onClick={() => updateCartQuantity(item.id, item.quantity + 1)}
+                            onClick={() => updateCartQuantity(item.id, item.quantity + 1)}
 
-                            className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
+                            className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
 
-                          >
+                          >
 
-                            <Plus className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                            <Plus className="w-4 h-4 text-gray-600 dark:text-gray-300" />
 
-                          </button>
+                          </button>
 
-                        </div>
+                        </div>
 
-                        <div className="text-right">
+                        <div className="text-right">
 
-                          <p className="text-lg font-bold text-gray-900 dark:text-white">
+                          <p className="text-lg font-bold text-gray-900 dark:text-white">
 
-                            ₹{(item.menu_items.price * item.quantity).toFixed(2)}
+                            ₹{(item.menu_items.price * item.quantity).toFixed(2)}
 
-                          </p>
+                          </p>
 
-                          <button
+                          <button
 
-                            onClick={() => removeFromCart(item.id)}
+                            onClick={() => removeFromCart(item.id)}
 
-                            className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors"
+                            className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors"
 
-                          >
+                          >
 
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-4 h-4" />
 
-                          </button>
+                          </button>
 
-                        </div>
+                        </div>
 
-                      </div>
+                      </div>
 
-                    </div>
+                    </div>
 
-                  ))}
+                  ))}
 
-                </div>
+                </div>
 
 
 
-                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
 
-                  <div className="flex justify-between items-center text-xl font-bold mb-4">
+                  <div className="flex justify-between items-center text-xl font-bold mb-4">
 
-                    <span className="text-gray-900 dark:text-white">Total:</span>
+                    <span className="text-gray-900 dark:text-white">Total:</span>
 
-                    <span className="text-orange-600 dark:text-orange-400">
+                    <span className="text-orange-600 dark:text-orange-400">
 
-                      ₹{cartItems.reduce((sum, item) => sum + (item.menu_items.price * item.quantity), 0).toFixed(2)}
+                      ₹{cartItems.reduce((sum, item) => sum + (item.menu_items.price * item.quantity), 0).toFixed(2)}
 
-                    </span>
+                    </span>
 
-                  </div>
+                  </div>
 
-                  <button
+                  <button
 
-                    onClick={placeOrder}
+                    onClick={placeOrder}
 
-                    className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg transition-colors flex items-center justify-center space-x-2"
+                    className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg transition-colors flex items-center justify-center space-x-2"
 
-                  >
+                  >
 
-                    <CreditCard className="w-5 h-5" />
+                    <CreditCard className="w-5 h-5" />
 
-                    <span>Place Order</span>
+                    <span>Place Order</span>
 
-                  </button>
+                  </button>
 
-                </div>
+                </div>
 
-              </div>
+              </div>
 
-            )}
+            )}
 
-          </div>
+          </div>
 
-        )}
+        )}
 
 
 
-        {/* Orders Tab */}
+        {/* Orders Tab */}
 
-        {activeTab === 'orders' && (
+        {activeTab === 'orders' && (
 
-          <div className="space-y-6">
+          <div className="space-y-6">
 
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Your Orders</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Your Orders</h2>
 
 
 
-            {orders.length === 0 ? (
+            {orders.length === 0 ? (
 
-              <div className="text-center py-12">
+              <div className="text-center py-12">
 
-                <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
 
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No orders yet</h3>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No orders yet</h3>
 
-                <p className="text-gray-500 dark:text-gray-400">Place your first order from the menu</p>
+                <p className="text-gray-500 dark:text-gray-400">Place your first order from the menu</p>
 
-                <button
+                <button
 
-                  onClick={() => setActiveTab('menu')}
+                  onClick={() => setActiveTab('menu')}
 
-                  className="mt-4 bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg transition-colors"
+                  className="mt-4 bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg transition-colors"
 
-                >
+                >
 
-                  Browse Menu
+                  Browse Menu
 
-                </button>
+                </button>
 
-              </div>
+              </div>
 
-            ) : (
+            ) : (
 
-              <div className="space-y-4">
+              <div className="space-y-4">
 
-                {orders.map((order) => (
+                {orders.map((order) => (
 
-                  <div key={order.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                  <div key={order.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
 
-                    <div className="flex justify-between items-start mb-4">
+                    <div className="flex justify-between items-start mb-4">
 
-                      <div>
+                      <div>
 
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
 
-                          Order #{order.id.slice(-8)}
+                          Order #{order.id.slice(-8)}
 
-                        </h3>
+                        </h3>
 
-                        <p className="text-gray-600 dark:text-gray-300">
+                        <p className="text-gray-600 dark:text-gray-300">
 
-                          {new Date(order.created_at).toLocaleDateString()} at{' '}
+                          {new Date(order.created_at).toLocaleDateString()} at{' '}
 
-                          {new Date(order.created_at).toLocaleTimeString()}
+                          {new Date(order.created_at).toLocaleTimeString()}
 
-                        </p>
+                        </p>
 
-                      </div>
+                      </div>
 
-                      <div className="text-right">
+                      <div className="text-right">
 
-                        <div className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
+                        <div className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
 
-                          {getStatusIcon(order.status)}
+                          {getStatusIcon(order.status)}
 
-                          <span>{order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>
+                          <span>{order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>
 
-                        </div>
+                        </div>
 
-                        <p className="text-lg font-bold text-gray-900 dark:text-white mt-2">₹{order.total_amount}</p>
+                        <p className="text-lg font-bold text-gray-900 dark:text-white mt-2">₹{order.total_amount}</p>
 
-                      </div>
+                      </div>
 
-                    </div>
+                    </div>
 
 
 
-                    <div className="space-y-2">
+                    <div className="space-y-2">
 
-                      {order.order_items.map((item) => (
+                      {order.order_items.map((item) => (
 
-                        <div key={item.id} className="flex justify-between items-center py-2 border-t border-gray-200 dark:border-gray-600">
+                        <div key={item.id} className="flex justify-between items-center py-2 border-t border-gray-200 dark:border-gray-600">
 
-                          <div className="flex items-center space-x-3">
+                          <div className="flex items-center space-x-3">
 
-                            <img
+                            <img
 
-                              src={item.menu_items.image_url}
+                              src={item.menu_items.image_url}
 
-                              alt={item.menu_items.name}
+                              alt={item.menu_items.name}
 
-                              className="w-10 h-10 object-cover rounded"
+                              className="w-10 h-10 object-cover rounded"
 
-                            />
+                            />
 
-                            <div>
+                            <div>
 
-                              <p className="font-medium text-gray-900 dark:text-white">{item.menu_items.name}</p>
+                              <p className="font-medium text-gray-900 dark:text-white">{item.menu_items.name}</p>
 
-                              <p className="text-sm text-gray-600 dark:text-gray-300">Quantity: {item.quantity}</p>
+                              <p className="text-sm text-gray-600 dark:text-gray-300">Quantity: {item.quantity}</p>
 
-                            </div>
+                            </div>
 
-                          </div>
+                          </div>
 
-                          <p className="font-medium text-gray-900 dark:text-white">₹{(item.price * item.quantity).toFixed(2)}</p>
+                          <p className="font-medium text-gray-900 dark:text-white">₹{(item.price * item.quantity).toFixed(2)}</p>
 
-                        </div>
+                        </div>
 
-                      ))}
+                      ))}
 
-                    </div>
+                    </div>
 
-                  </div>
+                  </div>
 
-                ))}
+                ))}
 
-              </div>
+              </div>
 
-            )}
+            )}
 
-          </div>
+          </div>
 
-        )}
+        )}
 
 
 
-        {/* Profile Tab */}
+        {/* Profile Tab */}
 
-        {activeTab === 'profile' && (
+        {activeTab === 'profile' && (
 
-          <div className="space-y-6">
+          <div className="space-y-6">
 
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Profile</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Profile</h2>
 
-            
+            
 
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 max-w-5xl mx-auto">
 
-              <div className="flex items-center space-x-4 mb-6">
+              <div className="flex items-center space-x-4 mb-6">
 
-                <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center">
+                <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center">
 
-                  <User className="w-8 h-8 text-white" />
+                  <User className="w-8 h-8 text-white" />
 
-                </div>
+                </div>
 
-                <div>
+                <div>
 
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{user?.full_name || 'Student'}</h3>
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{user?.full_name || 'Student'}</h3>
 
-                  <p className="text-gray-600 dark:text-gray-300">{user?.email}</p>
+                  <p className="text-gray-600 dark:text-gray-300">{user?.email}</p>
 
-                  {user?.registration_number && (
+                  {user?.registration_number && (
 
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Reg: {user.registration_number}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Reg: {user.registration_number}</p>
 
-                  )}
+                  )}
 
-                </div>
+                </div>
 
-              </div>
+              </div>
 
 
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-                <div>
+                <div>
 
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
 
-                    Full Name
+                    Full Name
 
-                  </label>
+                  </label>
 
-                  <input
+                  <input
 
-                    type="text"
+                    type="text"
 
-                    value={user?.full_name || ''}
+                    value={user?.full_name || ''}
 
-                    readOnly
+                    readOnly
 
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
 
-                  />
+                  />
 
-                </div>
+                </div>
 
-                <div>
+                <div>
 
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
 
-                    Email
+                    Email
 
-                  </label>
+                  </label>
 
-                  <input
+                  <input
 
-                    type="email"
+                    type="email"
 
-                    value={user?.email || ''}
+                    value={user?.email || ''}
 
-                    readOnly
+                    readOnly
 
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
 
-                  />
+                  />
 
-                </div>
+                </div>
 
-                <div>
+                <div>
 
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
 
-                    Role
+                    Role
 
-                  </label>
+                  </label>
 
-                  <input
+                  <input
 
-                    type="text"
+                    type="text"
 
-                    value="Student"
+                    value="Student"
 
-                    readOnly
+                    readOnly
 
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
 
-                  />
+                  />
 
-                </div>
+                </div>
 
-                <div>
+                <div>
 
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
 
-                    Registration Number
+                    Registration Number
 
-                  </label>
+                  </label>
 
-                  <input
+                  <input
 
-                    type="text"
+                    type="text"
 
-                    value={user?.registration_number || 'Not provided'}
+                    value={user?.registration_number || 'Not provided'}
 
-                    readOnly
+                    readOnly
 
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
 
-                  />
+                  />
 
-                </div>
+                </div>
 
-                <div>
+                <div>
 
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
 
-                    Mobile Number
+                    Mobile Number
 
-                  </label>
+                  </label>
 
-                  <input
+                  <input
 
-                    type="text"
+                    type="text"
 
-                    value={user?.mobile_number || 'Not provided'}
+                    value={user?.mobile_number || 'Not provided'}
 
-                    readOnly
+                    readOnly
 
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
 
-                  />
+                  />
 
-                </div>
+                </div>
 
-                <div>
+                <div>
 
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
 
-                    Account Created
+                    Account Created
 
-                  </label>
+                  </label>
 
-                  <input
+                  <input
 
-                    type="text"
+                    type="text"
 
-                    value={user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'Not available'}
+                    value={user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'Not available'}
 
-                    readOnly
+                    readOnly
 
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
 
-                  />
+                  />
 
-                </div>
+                </div>
 
-              </div>
+              </div>
 
-            </div>
+            </div>
 
-          </div>
+          </div>
 
-        )}
+        )}
 
-      </main>
+      </main>
 
 
 
-      <Footer />
+      <Footer />
 
 
 
-      {/* Toast */}
+      {/* Toast */}
 
-      {toast && (
+      {toast && (
 
-        <Toast
+        <Toast
 
-          message={toast.message}
+          message={toast.message}
 
-          type={toast.type}
+          type={toast.type}
 
-          onClose={() => setToast(null)}
+          onClose={() => setToast(null)}
 
-        />
+        />
 
-      )}
+      )}
 
-    </div>
+    </div>
 
-  );
+  );
 
 };
 
